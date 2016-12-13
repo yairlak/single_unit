@@ -1,0 +1,32 @@
+function results = clean_noisy_trials(data, settings, params)
+thresh = 50; % [Hz] Rate threshold for a noisy trial
+num_units = length(settings.units);
+phonemes = fieldnames(data.rasters_binned);
+num_phonemes = length(phonemes);
+num_rows = floor(sqrt(num_phonemes));
+num_cols = ceil(num_phonemes/num_rows);
+
+for u = 1:num_units
+    f = figure('color', [1 1 1], 'visible', off);
+    for ph = 1:num_phonemes
+        curr_ph = phonemes{ph};
+        subplot(num_rows, num_cols, ph)
+        firing_rates = data.spike_counts_binned(u).(curr_ph)/0.05;
+        plot(firing_rates, 'LineWidth', 1);
+        xlabel('Time bin (50ms')
+        ylabel('Firing rate (Hz)')
+        title(curr_ph)
+        
+        results.noisy_trials(u).omit_trials = sum(firing_rates > thresh, 2)>0;
+    end
+    settings_fields = {'patient'};
+    params_fields = {'sliding_bin_size', 'sliding_bin_step';
+    file_name = get_file_name_curr_run(settings, params, settings_fields, params_fields);
+    file_name = ['f_stat_' file_name];
+
+    saveas(f, fullfile('..','..','Figures',file_name))
+end
+
+results = [];
+
+end
