@@ -21,4 +21,4 @@ settings_fields = {'patient'};
 params_fields = [];
 file_name = get_file_name_curr_run(settings, params, settings_fields, params_fields);
 file_name = ['noisy_trials_' file_name];
-save(fullfile('../../Output/', [file_name '.mat']), 'settings', 'params', 'results')
+save(fullfile('..','..','Output', [file_name '.mat']), 'settings', 'params', 'results')

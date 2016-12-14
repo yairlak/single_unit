@@ -1,8 +1,8 @@
 clear all; close all; clc
 %%
-bin_sizes = 100:50:100;
-% for patient = {'D011', '466', '469', '472'}
-for patient = {'All'}
+bin_sizes = 50:50:150;
+for patient = {'D011', '466', '469', '472','All'}
+%for patient = {'All'}
 % for patient = {'472'}
     settings.patient = patient{1};
     switch patient{1}
@@ -15,14 +15,15 @@ for patient = {'All'}
         case '469'
             units = 1:3;
         case 'All'
-            units = 1:13;
+            units = 1:23;
     end
         
     settings.units = units;
+    units_results_to_plot = [];
     for unit = units
         close all
         settings.units = unit;
-        try
+  %      try
             all_results = []; all_results_h = [];
             for bin_size = bin_sizes
                 fprintf('Unit %i(%i), Patient %s Bin size %i\n', unit, length(units), patient{1}, bin_size)
@@ -34,16 +35,16 @@ for patient = {'All'}
                 all_results = [all_results; curr_results];
                 all_results_h = [all_results_h; curr_results_h];
             end
-        catch
-            fprintf('error in patient %s, unit %i\n', patient{1}, unit)
-            continue
-        end
+  %      catch
+  %          fprintf('error in patient %s, unit %i\n', patient{1}, unit)
+  %          continue
+ %       end
         times = 1:1501;
         step = 75;
-        
+        units_results_to_plot = [units_results_to_plot; all_results];
         %% Plot
         
-        % imagesc(all_results(1:length(bin_sizes), times))
+        % imagesc(all_results(1:length(bin_sizes), times))      
         figure('visible', 'off')
         imagesc(all_results)
         set(gcf, 'color', [1 1 1])
@@ -86,4 +87,18 @@ for patient = {'All'}
         end
     end
     
+    for bs=1:length(bin_sizes)
+        figure('visible', 'off')
+        bin_size_ix = bs:length(bin_sizes):size(units_results_to_plot,1);
+        plot(units_results_to_plot(bin_size_ix,:)');
+        title(sprintf('Patient %s BinSize %i All units ', settings.patient, bin_sizes(bs)));
+        xlabel('Center of bin (after stimulus onset)', 'fontsize', 14);
+        set(gca, 'xtick', step:step:length(times), 'xticklabel', times(step:step:length(times))- 500);
+        ylabel('F val', 'fontsize', 14);
+        settings_fields = {'patient', 'units'};
+        params_fields = [];
+        file_name = get_file_name_curr_run(settings, params, settings_fields, params_fields);
+        file_name = ['f_stat_allUnits_binSize' num2str(bin_sizes(bs)) '_' file_name];
+        saveas(gcf, fullfile('..', '..', 'Figures', file_name), 'png');
+    end
 end

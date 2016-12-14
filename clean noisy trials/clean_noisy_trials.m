@@ -12,13 +12,14 @@ for u = 1:num_units
     for ph = 1:num_phonemes
         curr_ph = phonemes{ph};
         subplot(num_rows, num_cols, ph)
-        firing_rates = data.spike_counts_binned(u).(curr_ph)*20;
-        plot(firing_rates', 'LineWidth', 1);
+        spike_counts = data.spike_counts_binned(u).(curr_ph);
+        plot(spike_counts', 'LineWidth', 1);
         xlabel('Time bin (50ms')
-        ylabel('Firing rate (Hz)')
+        ylabel('Spike counts (n)')
         title(curr_ph)
         
-        passed_thresh = sum(firing_rates > thresh, 2)>0;
+        threshold = mean(sum(spike_counts'))+3*std(sum(spike_counts'));
+        passed_thresh = sum(spike_counts')>threshold;
         results.noisy_trials(u).(curr_ph) = passed_thresh;
         omit_trials_mat(u,ph,:) = passed_thresh;
     end
