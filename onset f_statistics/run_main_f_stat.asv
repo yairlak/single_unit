@@ -1,11 +1,11 @@
 clear all; close all; clc
 %%
-params.sliding_bin_size = 150;
+params.sliding_bin_size = 50;
 
 %%
 for patient = {'D011', '466', '469', '472', 'All'}
 % for patient = {'All'}
-    f = figure('visible', 'off', 'color', [1 1 1]);
+    f = figure('visible', 'on', 'color', [1 1 1]);
     settings.patient = patient{1};
     [settings, params] = load_settings_params(settings, params);
     file_names = dir(fullfile(settings.path2data_phonemes, '*.mat'));
@@ -33,17 +33,14 @@ for patient = {'D011', '466', '469', '472', 'All'}
             file_name = ['f_stat_' file_name];
             save(fullfile('../../Output/', [file_name '.mat']), 'curr_results')
         end
-        legend_str{unit}= ['Unit ' num2str(unit)];
+        legend_str{unit}=
     end
     
         
     %% Plot
     hold on; plot(results.time_onsets, mean(all_results), 'linewidth', 3, 'color', 'k')
-    legend_str{end+1} = 'NaN-mean';
-    legend(legend_str)
-    legend_str = [];
     times = 1:1501;
-    step = 100;   
+    step = 50;   
     xlabel('Center of bin (after stimulus onset)', 'fontsize', 14)
     set(gca, 'xtick', step:step:length(times), 'xticklabel', times(step:step:length(times))- 500)
     ylabel('F-statistics', 'fontsize', 14)

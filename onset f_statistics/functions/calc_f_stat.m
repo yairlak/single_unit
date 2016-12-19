@@ -26,7 +26,7 @@ for ph = 1:num_phonemes
     cnt = 1;
     for t = results.time_onsets 
         curr_block = curr_raster(:,t:(t+params.sliding_bin_size-1));
-        curr_block = mean(curr_block, 2);
+        curr_block = nanmean(curr_block, 2);
         raster_sliding(:,cnt) = curr_block;
         cnt = cnt + 1;
     end
@@ -44,10 +44,10 @@ end
        curr_ph = curr_phonemes{ph};
        raster_sliding = all_units.raster_sliding.(curr_ph);
        
-       within_phoneme_variability = sum(bsxfun(@minus, raster_sliding, mean(raster_sliding)).^2);
+       within_phoneme_variability = nansum(bsxfun(@minus, raster_sliding, nanmean(raster_sliding)).^2);
        total_within_phoneme_variability = total_within_phoneme_variability + within_phoneme_variability;
        
-       overall_mean_of_data = overall_mean_of_data + sum(raster_sliding);
+       overall_mean_of_data = overall_mean_of_data + nansum(raster_sliding);
        number_of_observations = number_of_observations + size(raster_sliding, 1);
    end
    total_within_phoneme_variability = total_within_phoneme_variability/(number_of_observations - num_phonemes);
@@ -61,7 +61,7 @@ end
 
        n_i = size(raster_sliding, 1);
        
-       between_variability = between_variability + n_i * (mean(raster_sliding) - overall_mean_of_data) .^ 2;
+       between_variability = between_variability + n_i * (nanmean(raster_sliding) - overall_mean_of_data) .^ 2;
    end
    between_variability = between_variability/(num_phonemes - 1);
    
@@ -70,5 +70,5 @@ end
    v2 = (number_of_observations - num_phonemes);
    results.f_stat_sliding = between_variability./total_within_phoneme_variability;
    results.p_sliding = 1-fcdf(results.f_stat_sliding, v1, v2);
-   results.h_sliding = results.p_sliding < 0.05;
+   results.h_sliding = results.p_sliding < params.alpha_p_value;
 end
