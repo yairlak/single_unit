@@ -22,6 +22,7 @@ for u = 1:num_units
         curr_ph = phonemes{ph};
         subplot(num_rows, num_cols, ph)
         spike_counts = data.spike_counts_binned(u).(curr_ph);
+        spike_counts_cleaned = data.rasters(u).data.BlockSpikeTrains.(curr_ph);
         plot(spike_counts', 'LineWidth', 1);
         xlabel('Time bin (50ms')
         ylabel('Spike counts (n)')
@@ -30,7 +31,6 @@ for u = 1:num_units
         passed_thresh = sum(spike_counts')>thresh(u);
         results.noisy_trials(u).(curr_ph) = passed_thresh;
         omit_trials_mat(u,ph,:) = passed_thresh;
-        spike_counts_cleaned = spike_counts;
         spike_counts_cleaned(passed_thresh, :) = NaN;
         BlockSpikeTrains.(curr_ph) = spike_counts_cleaned;
     end
