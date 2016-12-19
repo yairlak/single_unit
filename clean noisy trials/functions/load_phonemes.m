@@ -1,5 +1,5 @@
 function settings = load_phonemes(settings)
-load(fullfile('..','..','phoneme_names.mat'));
+load('../../phoneme_names.mat')
 natural_classes = load_natural_classes(settings);
 
 %%

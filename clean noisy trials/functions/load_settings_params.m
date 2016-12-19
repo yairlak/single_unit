@@ -7,7 +7,7 @@ settings.omit_no_response_phonemes = false;
 
 %%
 params.time_interval = '1:1500';
-params.num_bins = 30;
+params.num_bins = 3;
 % params.sliding_bin_size = 150;
 params.sliding_bin_step = 1;
 params.seed = 1;
