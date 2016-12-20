@@ -9,10 +9,13 @@ for u = 1:num_units
     all_spike_counts_binned = [];
     for ph = 1:num_phonemes
         curr_ph = phonemes{ph};
-        spike_counts = data.spike_counts_binned(u).(curr_ph);
-        all_spike_counts_binned = [all_spike_counts_binned; spike_counts];
+        spike_counts = data.rasters(u).data.BlockSpikeTrains.(curr_ph);
+        spike_counts = spike_counts(:,[1:500 1100:1500]);
+        spike_counts = sum(spike_counts,2);
+        all_spike_counts_binned = [all_spike_counts_binned; mean(spike_counts) + (std(spike_counts))];
     end
-    thresh(u) = mean(all_spike_counts_binned(:)) + 3 * std(all_spike_counts_binned(:));
+    
+    thresh(u) = max(all_spike_counts_binned);%mean(all_spike_counts_binned(:)) + 3 * std(all_spike_counts_binned(:));
 end
 
 for u = 1:num_units
@@ -28,7 +31,12 @@ for u = 1:num_units
         ylabel('Spike counts (n)')
         title(curr_ph)
         
+        spike_counts = data.rasters(u).data.BlockSpikeTrains.(curr_ph);
+        spike_counts = spike_counts(:,[1:500 1100:1500]);
         passed_thresh = sum(spike_counts')>thresh(u);
+        if (max(passed_thresh)>0)
+            ['removed: patient' settings.patient ' - unit '  num2str(u)  ' phoneme ' curr_ph ' - ' mat2str(find(passed_thresh==1))]
+        end
         results.noisy_trials(u).(curr_ph) = passed_thresh;
         omit_trials_mat(u,ph,:) = passed_thresh;
         spike_counts_cleaned(passed_thresh, :) = NaN;
