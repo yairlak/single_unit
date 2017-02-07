@@ -1,5 +1,5 @@
 function results = check_responsiveness(data, settings, params)
-
+fid = fopen(sprintf('../../Output/log_unresponsive_units%s.txt', settings.stimulus_onset), 'a');
 phonemes = fieldnames(data.rasters_binned(1));
 num_phonemes = length(phonemes);
 
@@ -28,5 +28,7 @@ for f = 1:length(results.omit_files)
     folders = strsplit(settings.path2data_phonemes, '/');
     folders = folders(1:end-1);
     destin = strjoin(folders, '/');
+    fprintf('Patient %s Unit %s\n', settings.patient, results.omit_files{f});
+    fprintf(fid, 'Patient %s Unit %s\n', settings.patient, results.omit_files{f});
     movefile(src, destin)
 end

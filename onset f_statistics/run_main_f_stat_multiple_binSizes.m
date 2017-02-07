@@ -1,6 +1,6 @@
 clear all; close all; clc
 %%
-bin_sizes = 100:50:100;
+bin_sizes = 50:50:1000;
 % for patient = {'D011', '466', '469', '472'}
 for patient = {'All'}
 % for patient = {'472'}
@@ -15,7 +15,7 @@ for patient = {'All'}
         case '469'
             units = 1:3;
         case 'All'
-            units = 1:14;
+            units = 1:15;
     end
         
     settings.units = units;

@@ -14,11 +14,11 @@ settings = load_phonemes(settings);
 data = divide_into_bins(data, settings, params);
 
 %% Calculate f statistics
-results = check_responsiveness(data, settings, params);
+results = calc_a_stat(data, settings, params);
 
 %% Save all
-settings_fields = {'patient'};
-params_fields = [];
+settings_fields = {'patient', 'units'};
+params_fields = {'sliding_bin_size', 'sliding_bin_step'};
 file_name = get_file_name_curr_run(settings, params, settings_fields, params_fields);
-file_name = ['responsivenss_' settings.stimulus_onset file_name];
+file_name = ['a_stat_' settings.stimulus_onset file_name];
 save(fullfile('../../Output/', [file_name '.mat']), 'settings', 'params', 'results')

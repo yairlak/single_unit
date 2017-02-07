@@ -1,5 +1,6 @@
 % clear all; close all; clc
 addpath('functions')
+
 %% Load settings and parameters
 [settings, params] = load_settings_params(settings, params);
 rng(params.seed);
@@ -13,12 +14,6 @@ settings = load_phonemes(settings);
 %% Divide into bins and generate post-stimulus time histograms (PSTHs)
 data = divide_into_bins(data, settings, params);
 
-%% Calculate f statistics
-results = check_responsiveness(data, settings, params);
+%% Plot and save
+generate_figures(data, settings, params)
 
-%% Save all
-settings_fields = {'patient'};
-params_fields = [];
-file_name = get_file_name_curr_run(settings, params, settings_fields, params_fields);
-file_name = ['responsivenss_' settings.stimulus_onset file_name];
-save(fullfile('../../Output/', [file_name '.mat']), 'settings', 'params', 'results')
